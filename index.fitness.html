@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formular Plan Alimentar Personalizat</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #8888aa;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #ccccee;
+        }
+        .emoji-label { font-size: 18px; margin-right: 6px; }
+        input[type="number"], input[type="text"], textarea, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #333366;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #1e1e3f;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #6c63ff;
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        select option { background: #1e1e3f; color: #fff; }
+        .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .radio-option {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 14px 10px;
+            border: 2px solid #333366;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            background: #1e1e3f;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .radio-option:hover { border-color: #6c63ff; }
+        .radio-option.selected {
+            border-color: #6c63ff;
+            background: #6c63ff;
+            color: #fff;
+        }
+        .radio-option input { display: none; }
+        .divider {
+            height: 1px;
+            background: #333366;
+            margin: 28px 0;
+        }
+        .error {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+        }
+        .error.show { display: block; }
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6c63ff, #4834d4);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .submit-btn:hover { opacity: 0.9; }
+        .submit-btn:active { transform: scale(0.98); }
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .success-box {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+        .success-box h2 { font-size: 28px; margin-bottom: 12px; }
+        .success-box p { color: #8888aa; font-size: 16px; }
+        .note {
+            background: #2a2a4a;
+            border-left: 4px solid #6c63ff;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #aaaacc;
+        }
+
+        /* ===== CHAT ID FIELD ===== */
+        .chat-id-section {
+            background: #2a2a4a;
+            border: 2px solid #6c63ff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        .chat-id-section label { color: #ff9f43; }
+        .chat-id-section small {
+            display: block;
+            color: #8888aa;
+            font-size: 12px;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>&#127869; Plan Alimentar Personalizat</h1>
+        <p class="subtitle">Completeaza datele si primesti planul pe Telegram</p>
+
+        <div id="formSection">
+            <div class="note">
+                &#128274; Datele tale sunt folosite exclusiv pentru crearea planului alimentar.
+            </div>
+
+            <!-- CHAT ID -->
+            <div class="chat-id-section">
+                <label><span class="emoji-label">&#128172;</span>Chat ID Telegram</label>
+                <input type="text" id="chat_id" placeholder="Ex: 123456789">
+                <small>Trimite mesajul <b>/start</b> catre botul <b>@userinfobot</b> pe Telegram ca sa afli Chat ID-ul tau. Copiaza numarul si pune-l aici.</small>
+                <div class="error" id="err-chatid">Introdu Chat ID-ul tau de Telegram</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- VARSTA -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#127874;</span>Varsta (ani)</label>
+                <input type="number" id="varsta" min="14" max="80" placeholder="Ex: 25">
+                <div class="error" id="err-varsta">Introdu o varsta valida (14-80)</div>
+            </div>
+
+            <!-- INALTIME -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#128207;</span>Inaltime (cm)</label>
+                <input type="number" id="inaltime" min="120" max="230" placeholder="Ex: 175">
+                <div class="error" id="err-inaltime">Introdu o inaltime valida (120-230 cm)</div>
+            </div>
+
+            <!-- GREUTATE -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#9878;&#65039;</span>Greutate (kg)</label>
+                <input type="number" id="greutate" min="30" max="250" step="0.1" placeholder="Ex: 80">
+                <div class="error" id="err-greutate">Introdu o greutate valida (30-250 kg)</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- GEN -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#128100;</span>Gen</label>
+                <div class="radio-group" id="gen-group">
+                    <div class="radio-option" onclick="selectOption(this, 'gen', 'Masculin')">
+                        <input type="radio" name="gen" value="Masculin">
+                        &#9794;&#65039; Masculin
+                    </div>
+                    <div class="radio-option" onclick="selectOption(this, 'gen', 'Feminin')">
+                        <input type="radio" name="gen" value="Feminin">
+                        &#9792;&#65039; Feminin
+                    </div>
+                </div>
+                <div class="error" id="err-gen">Selecteaza genul</div>
+            </div>
+
+            <!-- NIVEL ACTIVITATE -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#127939;</span>Nivel de activitate</label>
+                <select id="nivel_activitate">
+                    <option value="" disabled selected>Alege nivelul...</option>
+                    <option value="Sedentar">&#129685; Sedentar (birou, fara sport)</option>
+                    <option value="Usor activ">&#128694; Usor activ (1-2 antrenamente/sapt)</option>
+                    <option value="Moderat">&#127947;&#65039; Moderat (3-5 antrenamente/sapt)</option>
+                    <option value="Foarte activ">&#128170; Foarte activ (6-7 antrenamente/sapt)</option>
+                    <option value="Extrem">&#128293; Extrem (2x/zi sau munca fizica + sport)</option>
+                </select>
+                <div class="error" id="err-nivel">Selecteaza nivelul de activitate</div>
+            </div>
+
+            <!-- OBIECTIV -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#127919;</span>Obiectiv</label>
+                <div class="radio-group" id="obiectiv-group">
+                    <div class="radio-option" onclick="selectOption(this, 'obiectiv', 'Slabire')">
+                        <input type="radio" name="obiectiv" value="Slabire">
+                        &#128201; Slabire
+                    </div>
+                    <div class="radio-option" onclick="selectOption(this, 'obiectiv', 'Mentinere')">
+                        <input type="radio" name="obiectiv" value="Mentinere">
+                        &#9878;&#65039; Mentinere
+                    </div>
+                    <div class="radio-option" onclick="selectOption(this, 'obiectiv', 'Masa musculara')">
+                        <input type="radio" name="obiectiv" value="Masa musculara">
+                        &#128170; Masa musculara
+                    </div>
+                </div>
+                <div class="error" id="err-obiectiv">Selecteaza obiectivul</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- NUMAR MESE -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#127860;</span>Numar de mese dorite pe zi</label>
+                <select id="numar_mese">
+                    <option value="" disabled selected>Alege...</option>
+                    <option value="3">3 mese</option>
+                    <option value="4">4 mese</option>
+                    <option value="5">5 mese</option>
+                    <option value="6">6 mese</option>
+                </select>
+                <div class="error" id="err-mese">Selecteaza numarul de mese</div>
+            </div>
+
+            <!-- ALIMENTE PREFERATE -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#128154;</span>Alimente preferate</label>
+                <textarea id="alimente_preferate" placeholder="Ex: pui, orez, oua, broccoli, banane, unt de arahide..."></textarea>
+                <div class="error" id="err-preferate">Scrie cel putin cateva alimente preferate</div>
+            </div>
+
+            <!-- ALIMENTE EXCLUSE -->
+            <div class="form-group">
+                <label><span class="emoji-label">&#128683;</span>Alimente excluse din plan</label>
+                <textarea id="alimente_excluse" placeholder="Ex: lactate, gluten, soia, porumb..."></textarea>
+                <div class="error" id="err-excluse">Scrie alimentele pe care vrei sa le excluzi</div>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+                &#128233; Trimite Formularul
+            </button>
+        </div>
+
+        <div class="success-box" id="successBox">
+            <h2>&#9989; Trimis cu succes!</h2>
+            <p>Verifica Telegram-ul. Planul alimentar va fi generat in cateva secunde.</p>
+            <p style="margin-top:16px;font-size:14px;color:#6c63ff;">Poti inchide aceasta pagina.</p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // IMPORTANT: Schimba URL-ul de mai jos cu URL-ul tau webhook
+        // Il gasesti in n8n -> deschide nodul "Webhook Formular" ->
+        // copiaza "Production URL"
+        // ============================================================
+        const WEBHOOK_URL = 'https://dacne13.app.n8n.cloud/webhook/fitness-form';
+
+        let selectedValues = {};
+
+        function selectOption(el, group, value) {
+            el.parentElement.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            el.querySelector('input').checked = true;
+            selectedValues[group] = value;
+        }
+
+        async function submitForm() {
+            const btn = document.getElementById('submitBtn');
+            document.querySelectorAll('.error').forEach(e => e.classList.remove('show'));
+
+            const chatId = document.getElementById('chat_id').value.trim();
+            const varsta = parseInt(document.getElementById('varsta').value);
+            const inaltime = parseInt(document.getElementById('inaltime').value);
+            const greutate = parseFloat(document.getElementById('greutate').value);
+            const gen = selectedValues['gen'];
+            const nivelActivitate = document.getElementById('nivel_activitate').value;
+            const obiectiv = selectedValues['obiectiv'];
+            const numarMese = document.getElementById('numar_mese').value;
+            const alimentePreferate = document.getElementById('alimente_preferate').value.trim();
+            const alimenteExcluse = document.getElementById('alimente_excluse').value.trim();
+
+            let valid = true;
+            if (!chatId || chatId.length < 5) { document.getElementById('err-chatid').classList.add('show'); valid = false; }
+            if (!varsta || varsta < 14 || varsta > 80) { document.getElementById('err-varsta').classList.add('show'); valid = false; }
+            if (!inaltime || inaltime < 120 || inaltime > 230) { document.getElementById('err-inaltime').classList.add('show'); valid = false; }
+            if (!greutate || greutate < 30 || greutate > 250) { document.getElementById('err-greutate').classList.add('show'); valid = false; }
+            if (!gen) { document.getElementById('err-gen').classList.add('show'); valid = false; }
+            if (!nivelActivitate) { document.getElementById('err-nivel').classList.add('show'); valid = false; }
+            if (!obiectiv) { document.getElementById('err-obiectiv').classList.add('show'); valid = false; }
+            if (!numarMese) { document.getElementById('err-mese').classList.add('show'); valid = false; }
+            if (!alimentePreferate || alimentePreferate.length < 3) { document.getElementById('err-preferate').classList.add('show'); valid = false; }
+            if (!alimenteExcluse || alimenteExcluse.length < 2) { document.getElementById('err-excluse').classList.add('show'); valid = false; }
+
+            if (!valid) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Se trimite...';
+
+            const data = {
+                chat_id: chatId,
+                varsta: varsta,
+                inaltime: inaltime,
+                greutate: greutate,
+                gen: gen,
+                nivel_activitate: nivelActivitate,
+                alimente_preferate: alimentePreferate,
+                alimente_excluse: alimenteExcluse,
+                obiectiv: obiectiv,
+                numar_mese: numarMese
+            };
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    document.getElementById('formSection').style.display = 'none';
+                    document.getElementById('successBox').style.display = 'block';
+                } else {
+                    alert('Eroare la trimitere. Verifica daca workflow-ul este activ in n8n.');
+                    btn.disabled = false;
+                    btn.textContent = '\uD83D\uDCE9 Trimite Formularul';
+                }
+            } catch (err) {
+                alert('Nu s-a putut conecta la server. Verifica URL-ul webhook si ca workflow-ul este activ.');
+                btn.disabled = false;
+                btn.textContent = '\uD83D\uDCE9 Trimite Formularul';
+            }
+        }
+    </script>
+</body>
+</html>
